@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Happy New Year 2026</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  overflow: hidden;
+}
+
+/* ---------- SLIDES ---------- */
+.slide {
+  display: none;
+  min-height: 100svh;
+  padding: 20px;
+  box-sizing: border-box;
+  text-align: center;
+  background: linear-gradient(#ffe4ec, #ffd6e0);
+  color: #333;
+}
+
+.slide.active {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* intro slides stay black */
+#blackSlide,
+.intro-slide {
+  background: black !important;
+  color: white !important;
+}
+
+/* ---------- BUTTON ---------- */
+.btn {
+  margin-top: 25px;
+  padding: 12px 25px;
+  border-radius: 25px;
+  background: #ff6f91;
+  color: white;
+  border: none;
+  font-size: 16px;
+}
+
+/* ---------- CARD ---------- */
+.card {
+  background: white;
+  border-radius: 20px;
+  padding: 25px;
+  max-width: 90%;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+
+/* ---------- TAP HINT ---------- */
+.tap-hint {
+  position: absolute;
+  bottom: 25px;
+  font-size: 14px;
+  color: #ff6f91;
+  opacity: 0.8;
+}
+
+/* ---------- LOCK ---------- */
+.lock-screen {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(#000, #111);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.lock-card {
+  background: white;
+  padding: 30px;
+  border-radius: 25px;
+  text-align: center;
+  width: 85%;
+  max-width: 320px;
+}
+
+.lock-card input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 15px;
+  border: 1px solid #ccc;
+  margin: 15px 0;
+  font-size: 16px;
+  text-align: center;
+}
+
+#errorMsg {
+  color: #ff4d6d;
+  display: none;
+}
+
+/* ---------- FIREWORKS ---------- */
+#fireworks {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* ---------- NOTES ---------- */
+.notes {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.note {
+  width: 80px;
+  height: 80px;
+  perspective: 600px;
+}
+
+.note-inner {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+  position: relative;
+}
+
+.note.flipped .note-inner {
+  transform: rotateY(180deg);
+}
+
+.note-front,
+.note-back {
+  position: absolute;
+  inset: 0;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backface-visibility: hidden;
+  font-weight: bold;
+}
+
+.note-front {
+  background: #ffb6c1;
+  font-size: 24px;
+}
+
+.note-back {
+  background: white;
+  transform: rotateY(180deg);
+  font-size: 14px;
+}
+
+/* ---------- MEMORY ---------- */
+.card-stack {
+  position: relative;
+  width: 260px;
+  height: 360px;
+  margin-top: 20px;
+}
+
+.memory-card {
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  background: #ffb6c1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backface-visibility: hidden;
+  transition: transform 0.8s, opacity 0.6s;
+}
+
+.memory-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 20px;
+}
+
+.memory-card.back {
+  background: #ff6f91;
+  color: white;
+  font-size: 40px;
+}
+
+.memory-card.flipped {
+  transform: rotateY(180deg);
+}
+
+.memory-card.gone {
+  transform: translateX(120%) rotate(10deg);
+  opacity: 0;
+}
+  .memory-single {
+  width: 260px;
+  height: 360px;
+  border-radius: 20px;
+  object-fit: cover;
+  background: #ff6f91;
+  box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+  animation: appear 0.4s ease;
+}
+
+@keyframes appear {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.memory-slide-out {
+  animation: slideOut 0.6s forwards;
+}
+
+@keyframes slideOut {
+  to {
+    transform: translateX(120%) rotate(10deg);
+    opacity: 0;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="fireworks"></canvas>
+<audio id="bgMusic" src="music.mp3" loop></audio>
+
+<!-- LOCK -->
+<div id="lockScreen" class="lock-screen">
+  <div class="lock-card">
+    <h2>A little secret 💗</h2>
+    <input type="password" id="passwordInput" placeholder="Password">
+    <button class="btn" onclick="unlock()">Unlock</button>
+    <p id="errorMsg">Wrong password</p>
+  </div>
+</div>
+
+<!-- BLACK -->
+<div class="slide active" id="blackSlide"></div>
+
+<!-- INTRO -->
+<div class="slide intro-slide" id="introSlide">
+  <h1>Happy New Year 2026</h1>
+  <p>I made something special to start our new year 💗</p>
+</div>
+
+<!-- JUST FOR YOU -->
+<div class="slide">
+  <h2>Just for you 💗</h2>
+  <button class="btn" onclick="nextSlide()">Open it ✨</button>
+</div>
+
+<!-- FUN -->
+<div class="slide">
+  <p>Same drama, new year 😌💞</p>
+  <button class="btn" onclick="nextSlide()">Tap me</button>
+</div>
+
+<!-- NOTES -->
+<div class="slide">
+  <h2>Tap the notes 💗</h2>
+  <div class="notes">
+    <div class="note" onclick="flipNote()"><div class="note-inner"><div class="note-front">💗</div><div class="note-back">You</div></div></div>
+    <div class="note" onclick="flipNote()"><div class="note-inner"><div class="note-front">💗</div><div class="note-back">are</div></div></div>
+    <div class="note" onclick="flipNote()"><div class="note-inner"><div class="note-front">💗</div><div class="note-back">still</div></div></div>
+    <div class="note" onclick="flipNote()"><div class="note-inner"><div class="note-front">💗</div><div class="note-back">very</div></div></div>
+    <div class="note" onclick="flipNote()"><div class="note-inner"><div class="note-front">💗</div><div class="note-back">special</div></div></div>
+    <div class="note" onclick="flipNote()"><div class="note-inner"><div class="note-front">💗</div><div class="note-back">to me 💞</div></div></div>
+  </div>
+  <button class="btn" onclick="nextSlide()">Next</button>
+</div>
+
+<!-- LETTER -->
+<div class="slide" onclick="nextSlide()">
+  <div class="card">
+    <h2>Dear you</h2>
+    <p>Thank you for everything and it was a very wonderful year<br> n ur toh chudail aunty so 😛 <br> bhaw mat khana jyada huh 💗</p>
+  </div>
+  <div class="tap-hint">Tap to continue</div>
+</div>
+<!-- MEMORY -->
+<div class="slide">
+  <h2>Some moments I’ll always smile about 💗</h2>
+  <p>Tap to reveal them one by one</p>
+
+  <div class="card-stack">
+    <img id="memoryImage" src="photo1.jpg" class="memory-single">
+  </div>
+
+  <button class="btn" onclick="nextMemory()">Tap 💗</button>
+</div>
+
+<!-- FINAL -->
+<div class="slide">
+  <div class="card">
+    <h2>Once again Thank you for everything <br> and cheers to a new year 💖</h2>
+    <p>Here’s to 2026 ✨</p>
+  </div>
+</div>
+
+<script>
+let slides = document.querySelectorAll(".slide");
+let current = 0;
+function nextSlide() {
+  slides[current].classList.remove("active");
+  current++;
+  if (current < slides.length) slides[current].classList.add("active");
+}
+
+/* NOTES */
+let noteIndex = 0;
+function flipNote() {
+  const notes = document.querySelectorAll(".note");
+  if (noteIndex < notes.length) notes[noteIndex++].classList.add("flipped");
+}
+
+// 🃏 MEMORY CARD LOGIC — STABLE VERSION
+// 🧠 MEMORY LOGIC (STABLE)
+const photos = [
+  "photo1.jpg",
+  "photo2.jpg",
+  "photo3.jpg",
+  "photo4.jpg",
+  "photo5.jpg",
+  "photo6.jpg",
+  "photo7.jpg"
+];
+
+let memIndex = 0;
+
+function nextMemory() {
+  const img = document.getElementById("memoryImage");
+
+  // slide current out
+  img.classList.add("memory-slide-out");
+
+  setTimeout(() => {
+    memIndex++;
+
+    if (memIndex < photos.length) {
+      img.src = photos[memIndex];
+      img.classList.remove("memory-slide-out");
+    } else {
+      memIndex = 0;
+      nextSlide();
+    }
+  }, 600);
+}
+/* FIREWORKS */
+const canvas = document.getElementById("fireworks");
+const ctx = canvas.getContext("2d");
+function resize(){canvas.width=innerWidth;canvas.height=innerHeight}
+resize();addEventListener("resize",resize);
+
+let fireworks=[];
+class Firework{
+  constructor(x,y,big=false){
+    this.color=`hsl(${Math.random()*360},100%,60%)`;
+    this.p=[];
+    let c=big?200:80;
+    for(let i=0;i<c;i++){
+      let a=Math.random()*Math.PI*2,s=Math.random()*(big?6:3)+1;
+      this.p.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,a:1});
+    }
+  }
+  u(){this.p.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.02;p.a-=.01});
+    this.p=this.p.filter(p=>p.a>0)}
+  d(){this.p.forEach(p=>{ctx.globalAlpha=p.a;ctx.fillStyle=this.color;
+    ctx.beginPath();ctx.arc(p.x,p.y,2,0,Math.PI*2);ctx.fill()});
+    ctx.globalAlpha=1}
+}
+function anim(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  fireworks.forEach(f=>{f.u();f.d()});
+  fireworks=fireworks.filter(f=>f.p.length);
+  requestAnimationFrame(anim);
+}
+anim();
+setInterval(()=>{for(let i=0;i<3;i++)
+  fireworks.push(new Firework(Math.random()*canvas.width,Math.random()*canvas.height*.6))
+},800);
+
+/* LOCK */
+const PASSWORD="2026";
+function unlock(){
+  if(passwordInput.value===PASSWORD){
+    bgMusic.play();
+    lockScreen.remove();
+    setTimeout(()=>{
+      for(let i=0;i<6;i++)
+        setTimeout(()=>fireworks.push(new Firework(canvas.width/2,canvas.height*.25,true)),i*250);
+      slides[current].classList.remove("active");
+      current=1;slides[current].classList.add("active");
+      autoNextFromIntro();
+      blackSlide.remove();
+    },3000);
+  } else errorMsg.style.display="block";
+}
+  // auto move from intro after 3 seconds
+function autoNextFromIntro() {
+  setTimeout(() => {
+    nextSlide();
+  }, 3000);
+}
+</script>
+
+</body>
+</html>
